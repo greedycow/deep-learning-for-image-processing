@@ -43,12 +43,12 @@ def main():
     assert os.path.exists(weights_path), "file: '{}' dose not exist.".format(weights_path)
     model.load_state_dict(torch.load(weights_path))
 
-    model.eval()
-    with torch.no_grad():
+    model.eval() # 关闭dropout
+    with torch.no_grad(): # 不跟踪损失梯度
         # predict class
-        output = torch.squeeze(model(img.to(device))).cpu()
+        output = torch.squeeze(model(img.to(device))).cpu() # 把bench维度压缩掉
         predict = torch.softmax(output, dim=0)
-        predict_cla = torch.argmax(predict).numpy()
+        predict_cla = torch.argmax(predict).numpy() # 概率最大处所对应的索引值
 
     print_res = "class: {}   prob: {:.3}".format(class_indict[str(predict_cla)],
                                                  predict[predict_cla].numpy())
